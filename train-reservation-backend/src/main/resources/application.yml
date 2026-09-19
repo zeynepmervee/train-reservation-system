@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: train-reservation-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/train_reservation
+    username: train_user
+    password: train_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
