@@ -40,4 +40,8 @@ public class TripController {
                 date
         );
     }
+    @GetMapping("/{id}")
+    public TripResponse findById(@PathVariable Long id) {
+        return tripService.findById(id);
+    }
 }

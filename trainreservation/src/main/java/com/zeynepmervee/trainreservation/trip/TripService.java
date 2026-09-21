@@ -88,6 +88,12 @@ public class TripService {
                 .toList();
     }
 
+    public TripResponse findById(Long id) {
+        return tripRepository.findById(id)
+                .map(TripResponse::from)
+                .orElseThrow(() -> new TripNotFoundException(id));
+    }
+
     private void validateRequest(CreateTripRequest request) {
         if (request.departureStationId().equals(request.arrivalStationId())) {
             throw new InvalidTripException(
