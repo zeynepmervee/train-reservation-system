@@ -67,6 +67,16 @@ function formatPrice(value) {
     currency: 'TRY',
   }).format(value)
 }
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function openSeatSelection(trip) {
+  router.push({
+    name: 'seat-selection',
+    params: { tripId: trip.id },
+  })
+}
 </script>
 
 <template>
@@ -165,7 +175,9 @@ function formatPrice(value) {
 
         <div class="price">
           <strong>{{ formatPrice(trip.basePrice) }}</strong>
-          <button type="button">Koltuk Seç</button>
+          <button type="button" @click="openSeatSelection(trip)">
+            Koltuk Seç
+          </button>
         </div>
       </article>
     </section>

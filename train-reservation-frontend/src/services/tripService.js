@@ -13,3 +13,13 @@ export async function searchTrips(departureStationId, arrivalStationId, date) {
 
   return response.json()
 }
+
+export async function getTripById(tripId) {
+  const response = await fetch(`/api/v1/trips/${tripId}`)
+
+  if (!response.ok) {
+    throw new Error('Sefer bilgisi alınamadı.')
+  }
+
+  return response.json()
+}
