@@ -1,4 +1,4 @@
-package com.zeynepmervee.train_reservation_backend;
+package com.zeynepmervee.trainreservation;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
