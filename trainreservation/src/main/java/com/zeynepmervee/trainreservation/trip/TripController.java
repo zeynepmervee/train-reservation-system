@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.zeynepmervee.trainreservation.wagon.WagonService;
+import com.zeynepmervee.trainreservation.wagon.dto.WagonResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 public class TripController {
 
     private final TripService tripService;
+    private final WagonService wagonService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,5 +46,9 @@ public class TripController {
     @GetMapping("/{id}")
     public TripResponse findById(@PathVariable Long id) {
         return tripService.findById(id);
+    }
+    @GetMapping("/{id}/wagons")
+    public List<WagonResponse> findWagons(@PathVariable Long id) {
+        return wagonService.findAllByTripId(id);
     }
 }

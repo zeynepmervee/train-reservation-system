@@ -52,4 +52,7 @@ public class Reservation {
         this.expiresAt = expiresAt;
         this.status = ReservationStatus.PENDING;
     }
+    public void expire() {
+        this.status = ReservationStatus.EXPIRED;
+    }
 }

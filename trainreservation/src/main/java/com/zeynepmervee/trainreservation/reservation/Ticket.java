@@ -84,4 +84,7 @@ public class Ticket {
         this.ticketPrice = ticketPrice;
         this.status = TicketStatus.HELD;
     }
+    public void expire() {
+        this.status = TicketStatus.EXPIRED;
+    }
 }

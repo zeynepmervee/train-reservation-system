@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getTripById } from '@/services/tripService'
-import { getWagonsByTrainId } from '@/services/wagonService'
+import { getWagonsByTripId } from '@/services/wagonService'
 import { useReservationStore } from '@/stores/reservation'
 
 const reservationStore = useReservationStore()
@@ -42,7 +42,7 @@ const seatRows = computed(() => {
 onMounted(async () => {
   try {
     trip.value = await getTripById(route.params.tripId)
-    wagons.value = await getWagonsByTrainId(trip.value.trainId)
+    wagons.value = await getWagonsByTripId(trip.value.trainId)
 
     if (wagons.value.length > 0) {
       selectedWagonId.value = wagons.value[0].id
