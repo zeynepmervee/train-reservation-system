@@ -2,11 +2,13 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReservationStore } from '@/stores/reservation'
+import { createReservation } from '@/services/reservationService'
 
 const router = useRouter()
 const reservationStore = useReservationStore()
-
-const submitted = ref(false)
+const submitting = ref(false)
+const errorMessage = ref('')
+const reservationResult = ref(null)
 
 const passengers = ref(
   reservationStore.selectedSeats.map((seat) => ({
@@ -23,8 +25,29 @@ const passengers = ref(
 
 const trip = computed(() => reservationStore.trip)
 
-function handleSubmit() {
-  submitted.value = true
+async function handleSubmit() {
+  submitting.value = true
+  errorMessage.value = ''
+
+  const request = {
+    tripId: trip.value.id,
+    passengers: passengers.value.map((passenger) => ({
+      seatId: passenger.seatId,
+      firstName: passenger.firstName,
+      lastName: passenger.lastName,
+      birthDate: passenger.birthDate,
+      gender: passenger.gender,
+      passengerType: passenger.passengerType,
+    })),
+  }
+
+  try {
+    reservationResult.value = await createReservation(request)
+  } catch (error) {
+    errorMessage.value = error.message
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -125,15 +148,45 @@ function handleSubmit() {
             <strong>{{ passengers.length }}</strong>
           </div>
 
-          <button type="submit">
-            Bilgileri kontrol et
+          <button
+            type="submit"
+            :disabled="submitting || reservationResult"
+          >
+            {{ submitting ? 'Oluşturuluyor...' : 'Rezervasyonu oluştur' }}
           </button>
         </div>
       </form>
 
-      <div v-if="submitted" class="notice">
-        Yolcu bilgileri hazır. Sonraki adımda bu bilgileri backend’e
-        göndererek rezervasyonu oluşturacağız.
+      <div v-if="errorMessage" class="error-notice">
+        {{ errorMessage }}
+      </div>
+
+      <div v-if="reservationResult" class="success-notice">
+        <div>
+          <span>Rezervasyon numarası</span>
+          <strong>#{{ reservationResult.id }}</strong>
+        </div>
+
+        <div>
+          <span>Durum</span>
+          <strong>{{ reservationResult.status }}</strong>
+        </div>
+
+        <div>
+          <span>Toplam tutar</span>
+          <strong>
+            {{
+              new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY',
+              }).format(reservationResult.totalPrice)
+            }}
+          </strong>
+        </div>
+
+        <p>
+          Koltuklar 5 dakika süreyle sizin için tutulmaktadır.
+        </p>
       </div>
     </section>
 
@@ -332,6 +385,48 @@ select:focus {
   }
 
   .wide {
+    grid-column: auto;
+  }
+}
+.error-notice,
+.success-notice {
+  margin-top: 18px;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.error-notice {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.success-notice {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  border: 1px solid #5eead4;
+  background: #ccfbf1;
+  color: #115e59;
+}
+
+.success-notice div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.success-notice p {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+@media (max-width: 650px) {
+  .success-notice {
+    grid-template-columns: 1fr;
+  }
+
+  .success-notice p {
     grid-column: auto;
   }
 }
